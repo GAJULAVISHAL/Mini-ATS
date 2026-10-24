@@ -1,5 +1,4 @@
 
-// @ts-expect-error Bun provides the test module at runtime.
 import { describe, expect, test } from "bun:test";
 import { matchResumeToJob } from "../services/resume-matcher.js";
 

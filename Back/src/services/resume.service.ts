@@ -84,14 +84,11 @@ export const resumeService = {
     const absolutePath = resolve(uploadDirectory, storedFileName);
     const storagePath = `uploads/${storedFileName}`;
 
-    let candidateId: string | undefined;
-    let resumeId: string | undefined;
-
     try {
       await writeFile(absolutePath, file.buffer);
 
       const candidate = await candidateRepository.create();
-      candidateId = candidate.id;
+      const candidateId = candidate.id;
 
       const resume = await resumeRepository.create({
         candidateId,
@@ -101,7 +98,7 @@ export const resumeService = {
         fileSize: file.size,
         storagePath,
       });
-      resumeId = resume.id;
+      const resumeId = resume.id;
 
       let processingError: string | null = null;
       let extractedText: string | undefined;
