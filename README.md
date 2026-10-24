@@ -39,6 +39,12 @@ Mini ATS is a lightweight applicant tracking system for creating jobs, uploading
    bun install
    ```
 
+   The frontend backend URL is configured in `frontend/.env`:
+
+   ```env
+   VITE_BACKEND_URL=http://localhost:5000
+   ```
+
 ## Run locally
 
 Start the API:
