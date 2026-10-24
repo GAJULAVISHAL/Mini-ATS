@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum JobStatus {
+  ACTIVE
+  CLOSED
+}
+
+enum ResumeProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  SHORTLISTED
+  INTERVIEW
+  SELECTED
+  REJECTED
+  NEEDS_REVIEW
+}
+
+model Job {
+  id                 String    @id @default(cuid())
+  title              String
+  description        String    @db.Text
+  requiredSkills     String[]  @default([])
+  preferredSkills    String[]  @default([])
+  minExperienceYears Int?
+  status             JobStatus @default(ACTIVE)
+
+  applications Application[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Candidate {
+  id        String  @id @default(cuid())
+  name      String?
+  email     String?
+  phone     String?
+
+  resumes      Resume[]
+  applications Application[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Resume {
+  id               String                 @id @default(cuid())
+  candidateId      String
+  originalFileName String
+  storedFileName   String
+  mimeType         String
+  fileSize         Int
+  storagePath      String
+  extractedText    String?                @db.Text
+  processingStatus ResumeProcessingStatus @default(PENDING)
+  processingError  String?                @db.Text
+
+  candidate    Candidate     @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  uploadedAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Application {
+  id          String            @id @default(cuid())
+  jobId       String
+  candidateId String
+  resumeId    String
+  status      ApplicationStatus @default(APPLIED)
+
+  job       Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  resume    Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  matchReport MatchReport?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([jobId, resumeId])
+  @@index([jobId, status])
+  @@index([candidateId])
+}
+
+model MatchReport {
+  id            String @id @default(cuid())
+  applicationId String @unique
+  overallScore  Float
+  summary       String? @db.Text
+
+  matchedRequirements  Json
+  missingRequirements  Json
+  requirementEvidence  Json
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  generatedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
