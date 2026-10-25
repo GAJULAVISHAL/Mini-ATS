@@ -31,9 +31,13 @@ app.use("/api/jobs", matchReportRouter);
 app.use("/api/jobs", rankingRouter);
 
 
-app.listen(PORT, () => {
-  console.log(`Mini ATS API running at http://localhost:${PORT}`);
-});
+export default app;
+
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`Mini ATS API running at http://localhost:${PORT}`);
+  });
+}
 
 async function shutdown() {
   await prisma.$disconnect();
