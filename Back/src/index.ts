@@ -33,11 +33,10 @@ app.use("/api/jobs", rankingRouter);
 
 export default app;
 
-if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => {
-    console.log(`Mini ATS API running at http://localhost:${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Mini ATS API running at http://localhost:${PORT}`);
+});
+
 
 async function shutdown() {
   await prisma.$disconnect();
