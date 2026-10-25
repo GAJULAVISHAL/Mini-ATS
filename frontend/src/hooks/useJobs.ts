@@ -1,6 +1,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { Job } from "../types";
+import { apiUrl } from "../lib/api";
 
 export function useJobs() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -12,7 +13,7 @@ export function useJobs() {
     setError("");
 
     try {
-      const response = await fetch("/api/jobs");
+      const response = await fetch(apiUrl("/api/jobs"));
 
       const contentType = response.headers.get("content-type");
 

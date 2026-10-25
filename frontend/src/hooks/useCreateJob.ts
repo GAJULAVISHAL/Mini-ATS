@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import type { Job } from "../types";
+import { apiUrl } from "../lib/api";
 
 type CreateJobInput = {
   title: string;
@@ -19,7 +20,7 @@ export function useCreateJob() {
     setError("");
 
     try {
-      const response = await fetch("/api/jobs", {
+      const response = await fetch(apiUrl("/api/jobs"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

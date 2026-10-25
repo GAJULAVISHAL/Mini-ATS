@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { apiUrl } from "../lib/api";
 
 export function useResumeUpload() {
   const [uploading, setUploading] = useState(false);
@@ -15,7 +16,7 @@ export function useResumeUpload() {
       const formData = new FormData();
       formData.append("resumes", file);
 
-      const response = await fetch(`/api/jobs/${jobId}/resumes`, {
+      const response = await fetch(apiUrl(`/api/jobs/${jobId}/resumes`), {
         method: "POST",
         body: formData,
       });

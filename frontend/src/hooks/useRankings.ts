@@ -1,6 +1,7 @@
 
 import { useCallback, useState } from "react";
 import type { Ranking } from "../types";
+import { apiUrl } from "../lib/api";
 
 export function useRankings() {
   const [rankings, setRankings] = useState<Ranking[]>([]);
@@ -12,7 +13,7 @@ export function useRankings() {
     setError("");
 
     try {
-      const response = await fetch(`/api/jobs/${jobId}/rankings`);
+      const response = await fetch(apiUrl(`/api/jobs/${jobId}/rankings`));
       const result = await response.json();
 
       if (!response.ok) {

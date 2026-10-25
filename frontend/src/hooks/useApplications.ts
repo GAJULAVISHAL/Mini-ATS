@@ -1,6 +1,7 @@
 
 import { useCallback, useState } from "react";
 import type { Application } from "../types";
+import { apiUrl } from "../lib/api";
 
 export function useApplications() {
   const [applications, setApplications] = useState<Application[]>([]);
@@ -13,7 +14,7 @@ export function useApplications() {
     setError("");
 
     try {
-      const response = await fetch(`/api/jobs/${jobId}/applications`);
+      const response = await fetch(apiUrl(`/api/jobs/${jobId}/applications`));
       const result = await response.json();
 
       if (!response.ok) {
@@ -48,7 +49,7 @@ export function useApplications() {
 
       try {
         const response = await fetch(
-          `/api/jobs/applications/${applicationId}/match-report`,
+          apiUrl(`/api/jobs/applications/${applicationId}/match-report`),
           { method: "POST" }
         );
         const result = await response.json();
