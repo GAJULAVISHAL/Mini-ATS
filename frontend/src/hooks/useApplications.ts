@@ -1,20 +1,20 @@
 
 import { useCallback, useState } from "react";
-import type { Application } from "../types";
-import { apiUrl } from "../lib/api";
+import type { Application, ApplicationStatus } from "../types";
 
 export function useApplications() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const fetchApplications = useCallback(async (jobId: string) => {
     setLoading(true);
     setError("");
 
     try {
-      const response = await fetch(apiUrl(`/api/jobs/${jobId}/applications`));
+      const response = await fetch(`/api/jobs/${jobId}/applications`);
       const result = await response.json();
 
       if (!response.ok) {
@@ -32,9 +32,7 @@ export function useApplications() {
       setApplications(data);
       return data as Application[];
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to load applicants"
-      );
+      setError(err instanceof Error ? err.message : "Failed to load applicants");
       setApplications([]);
       return null;
     } finally {
@@ -49,15 +47,13 @@ export function useApplications() {
 
       try {
         const response = await fetch(
-          apiUrl(`/api/jobs/applications/${applicationId}/match-report`),
+          `/api/jobs/applications/${applicationId}/match-report`,
           { method: "POST" }
         );
         const result = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            result.message || "Failed to generate match report"
-          );
+          throw new Error(result.message || "Failed to generate match report");
         }
 
         await fetchApplications(jobId);
@@ -76,12 +72,57 @@ export function useApplications() {
     [fetchApplications]
   );
 
+  const updateStatus = useCallback(
+    async (
+      applicationId: string,
+      jobId: string,
+      status: ApplicationStatus
+    ) => {
+      setUpdatingId(applicationId);
+      setError("");
+
+      try {
+        const response = await fetch(
+          `/api/jobs/applications/${applicationId}/status`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ status }),
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to update hiring stage");
+        }
+
+        await fetchApplications(jobId);
+        return true;
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to update hiring stage"
+        );
+        return false;
+      } finally {
+        setUpdatingId(null);
+      }
+    },
+    [fetchApplications]
+  );
+
   return {
     applications,
     loading,
     error,
     generatingId,
+    updatingId,
     fetchApplications,
     generateReport,
+    updateStatus,
   };
 }

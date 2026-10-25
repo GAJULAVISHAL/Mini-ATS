@@ -17,12 +17,12 @@ export default function CandidateRankings({
   onHide,
 }: CandidateRankingsProps) {
   return (
-    <section className="mb-8 overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+    <section className="panel data-panel">
+      <div className="panel-header">
         <div>
-          <h3 className="text-lg font-semibold">Candidate Rankings</h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Candidates ordered by match score
+          <h3 className="panel-title">Candidate rankings</h3>
+          <p className="panel-subtitle">
+            A quick read on who is closest to the brief
           </p>
         </div>
 
@@ -31,7 +31,7 @@ export default function CandidateRankings({
             <button
               onClick={onLoad}
               disabled={loading}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="primary-button"
             >
               {loading ? "Loading..." : "Rank Candidates"}
             </button>
@@ -40,7 +40,7 @@ export default function CandidateRankings({
           {visible && (
             <button
               onClick={onHide}
-              className="text-sm text-slate-500 hover:text-slate-900"
+              className="quiet-button"
             >
               Hide
             </button>
@@ -50,49 +50,46 @@ export default function CandidateRankings({
 
       {visible && (
         loading ? (
-          <p className="p-5 text-sm text-slate-500">
+          <p className="empty-state">
             Loading rankings...
           </p>
         ) : rankings.length === 0 ? (
-          <p className="p-5 text-sm text-slate-500">
+          <p className="empty-state">
             No candidates found.
           </p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-162.5 text-left text-sm">
-              <thead className="bg-slate-50 text-slate-500">
+          <div className="table-wrap">
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <th className="px-5 py-3 font-medium">Rank</th>
-                  <th className="px-5 py-3 font-medium">Candidate</th>
-                  <th className="px-5 py-3 font-medium">Match Score</th>
-                  <th className="px-5 py-3 font-medium">Application Status</th>
+                  <th>Rank</th><th>Candidate</th><th>Match Score</th><th>Application Status</th>
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-slate-100">
                 {rankings.map((candidate) => (
                   <tr key={candidate.id}>
-                    <td className="px-5 py-4 font-semibold">
+                    <td>
                       #{candidate.rank}
                     </td>
-                    <td className="px-5 py-4">
-                      <p className="font-medium">
+                    <td>
+                      <p className="candidate-name">
                         {candidate.candidate.name || "Unnamed candidate"}
                       </p>
-                      <p className="mt-1 text-slate-500">
+                      <p className="candidate-sub">
                         {candidate.candidate.email || "No email"}
                       </p>
                     </td>
-                    <td className="px-5 py-4">
+                    <td>
                       {candidate.matchReport ? (
-                        <span className="font-semibold text-indigo-700">
+                        <span className="score">
                           {candidate.matchReport.overallScore.toFixed(1)}%
                         </span>
                       ) : (
-                        <span className="text-slate-400">Not scored</span>
+                        <span className="muted">Not scored</span>
                       )}
                     </td>
-                    <td className="px-5 py-4">{candidate.status}</td>
+                    <td className="mono-label">{candidate.status}</td>
                   </tr>
                 ))}
               </tbody>

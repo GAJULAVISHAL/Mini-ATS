@@ -12,6 +12,7 @@ import { useJobs } from "./hooks/useJobs";
 import { useApplications } from "./hooks/useApplications";
 import { useRankings } from "./hooks/useRankings";
 import { useResumeUpload } from "./hooks/useResumeUpload";
+import HiringPipeline from "./components/HiringPipeline";
 
 import type { Job } from "./types";
 
@@ -91,7 +92,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="app-shell">
       <Header
         onBack={selectedJob ? goBackToJobs : undefined}
         onRefresh={
@@ -100,16 +101,16 @@ function App() {
         loading={jobsState.loading}
       />
 
-      <main className="mx-auto max-w-7xl px-6 py-10">
+      <main className="page">
         {error && (
-          <div className="mb-6 flex items-start justify-between gap-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="notice">
             <p>{error}</p>
             <button
               onClick={() => {
                 // Errors are cleared when the corresponding request is retried.
                 void jobsState.fetchJobs();
               }}
-              className="font-semibold underline"
+              className="quiet-button"
             >
               Retry jobs request
             </button>
@@ -136,22 +137,24 @@ function App() {
           </>
         ) : (
           <>
-            <section className="mb-8">
+            <section>
               <button
                 onClick={goBackToJobs}
-                className="mb-4 text-sm font-medium text-indigo-600 hover:underline"
+                className="back-link"
               >
-                ← Back to jobs
+                ← All roles
               </button>
 
-              <h2 className="text-2xl font-semibold">
+              <h2 className="detail-title">
                 {selectedJob.title}
               </h2>
 
-              <p className="mt-2 text-sm text-slate-500">
-                {applicationsState.applications.length} applicants
+              <p className="detail-meta">
+                {applicationsState.applications.length} people in this pipeline
               </p>
             </section>
+
+            <HiringPipeline applications={applicationsState.applications} />
 
             {/* Resume upload section */}
             <ResumeUpload
@@ -172,7 +175,17 @@ function App() {
               applications={applicationsState.applications}
               loading={applicationsState.loading}
               generatingId={applicationsState.generatingId}
+              updatingId={applicationsState.updatingId}
               onGenerateScore={(id) => void handleGenerateScore(id)}
+              onUpdateStatus={(applicationId, status) => {
+                if (!selectedJob) return;
+
+                void applicationsState.updateStatus(
+                  applicationId,
+                  selectedJob.id,
+                  status
+                );
+              }}
             />
           </>
         )}

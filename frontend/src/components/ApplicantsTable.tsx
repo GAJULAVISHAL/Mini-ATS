@@ -1,64 +1,93 @@
 
-import type { Application } from "../types";
+import type { Application, ApplicationStatus } from "../types";
 
 type ApplicantsTableProps = {
   applications: Application[];
   loading: boolean;
   generatingId: string | null;
+  updatingId: string | null;
   onGenerateScore: (applicationId: string) => void;
+  onUpdateStatus: (
+    applicationId: string,
+    status: ApplicationStatus
+  ) => void;
 };
+
+const hiringStages: { value: ApplicationStatus; label: string }[] = [
+  { value: "APPLIED", label: "Applied" },
+  { value: "SHORTLISTED", label: "Shortlisted" },
+  { value: "INTERVIEW", label: "Interview" },
+  { value: "SELECTED", label: "Selected" },
+  { value: "REJECTED", label: "Rejected" },
+  { value: "NEEDS_REVIEW", label: "Needs Review" },
+];
+
+function getStageStyle(status: ApplicationStatus) {
+  switch (status) {
+    case "SHORTLISTED":
+      return "bg-blue-50 text-blue-700 border-blue-200";
+    case "INTERVIEW":
+      return "bg-violet-50 text-violet-700 border-violet-200";
+    case "SELECTED":
+      return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    case "REJECTED":
+      return "bg-red-50 text-red-700 border-red-200";
+    case "NEEDS_REVIEW":
+      return "bg-amber-50 text-amber-700 border-amber-200";
+    default:
+      return "bg-slate-50 text-slate-700 border-slate-200";
+  }
+}
 
 export default function ApplicantsTable({
   applications,
   loading,
   generatingId,
+  updatingId,
   onGenerateScore,
+  onUpdateStatus,
 }: ApplicantsTableProps) {
   if (loading) {
-    return <p className="text-slate-500">Loading applicants...</p>;
+    return <div className="empty-state">Loading applicants...</div>;
   }
 
   if (applications.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white p-8 text-slate-500">
-        No applicants found for this job.
+      <div className="empty-state">
+        <strong>No candidates in this role</strong>
+        Upload a resume above to begin the pipeline.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-      <table className="w-full min-w-212.5 text-left text-sm">
-        <thead className="border-b border-slate-200 bg-slate-50 text-slate-500">
+    <div className="panel data-panel">
+      <div className="table-wrap"><table className="data-table">
+        <thead>
           <tr>
-            <th className="px-5 py-4 font-medium">Candidate</th>
-            <th className="px-5 py-4 font-medium">Resume</th>
-            <th className="px-5 py-4 font-medium">Processing</th>
-            <th className="px-5 py-4 font-medium">Application</th>
-            <th className="px-5 py-4 font-medium">Match Score</th>
-            <th className="px-5 py-4 font-medium">Action</th>
+            <th>Candidate</th><th>Resume</th><th>Processing</th><th>Hiring Stage</th><th>Match Score</th><th>Action</th>
           </tr>
         </thead>
 
         <tbody className="divide-y divide-slate-100">
           {applications.map((application) => (
-            <tr key={application.id} className="hover:bg-slate-50">
-              <td className="px-5 py-4">
-                <p className="font-medium">
+            <tr key={application.id}>
+              <td>
+                <p className="candidate-name">
                   {application.candidate.name || "Unnamed candidate"}
                 </p>
-                <p className="mt-1 text-slate-500">
+                <p className="candidate-sub">
                   {application.candidate.email || "No email"}
                 </p>
               </td>
 
-              <td className="max-w-48 px-5 py-4">
-                <p className="wrap-break-word">
+              <td>
+                <p className="candidate-sub">
                   {application.resume.originalFileName}
                 </p>
               </td>
 
-              <td className="px-5 py-4">
+              <td>
                 <span
                   className={
                     application.resume.processingStatus === "COMPLETED"
@@ -72,19 +101,48 @@ export default function ApplicantsTable({
                 </span>
               </td>
 
-              <td className="px-5 py-4">{application.status}</td>
+              <td>
+                <select
+                  value={application.status}
+                  disabled={updatingId !== null}
+                  onChange={(event) =>
+                    onUpdateStatus(
+                      application.id,
+                      event.target.value as ApplicationStatus
+                    )
+                  }
+                  aria-label={`Hiring stage for ${
+                    application.candidate.name || "candidate"
+                  }`}
+                  className={`stage-select disabled:cursor-wait disabled:opacity-60 ${getStageStyle(
+                    application.status
+                  )}`}
+                >
+                  {hiringStages.map((stage) => (
+                    <option key={stage.value} value={stage.value}>
+                      {stage.label}
+                    </option>
+                  ))}
+                </select>
 
-              <td className="px-5 py-4">
-                {application.matchReport ? (
-                  <span className="font-semibold text-indigo-700">
-                    {application.matchReport.overallScore.toFixed(1)}%
-                  </span>
-                ) : (
-                  <span className="text-slate-400">Not generated</span>
+                {updatingId === application.id && (
+                  <p className="form-help">
+                    Updating...
+                  </p>
                 )}
               </td>
 
-              <td className="px-5 py-4">
+              <td>
+                {application.matchReport ? (
+                  <span className="score">
+                    {application.matchReport.overallScore.toFixed(1)}%
+                  </span>
+                ) : (
+                  <span className="muted">Not generated</span>
+                )}
+              </td>
+
+              <td>
                 {application.matchReport ? (
                   <span className="text-xs font-medium text-emerald-700">
                     Scored
@@ -94,9 +152,10 @@ export default function ApplicantsTable({
                     onClick={() => onGenerateScore(application.id)}
                     disabled={
                       generatingId !== null ||
+                      updatingId !== null ||
                       application.resume.processingStatus !== "COMPLETED"
                     }
-                    className="whitespace-nowrap rounded-md bg-indigo-600 px-3 py-2 text-xs font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="primary-button"
                   >
                     {generatingId === application.id
                       ? "Generating..."
@@ -108,6 +167,7 @@ export default function ApplicantsTable({
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

@@ -40,7 +40,7 @@ export type MatchReportData = {
 
 export type Application = {
   id: string;
-  status: string;
+  status: ApplicationStatus;
   candidate: Candidate;
   resume: Resume;
   matchReport: MatchReportData | null;
@@ -49,3 +49,11 @@ export type Application = {
 export type Ranking = Application & {
   rank: number;
 };
+
+export type ApplicationStatus =
+  | "APPLIED"
+  | "SHORTLISTED"
+  | "INTERVIEW"
+  | "SELECTED"
+  | "REJECTED"
+  | "NEEDS_REVIEW";

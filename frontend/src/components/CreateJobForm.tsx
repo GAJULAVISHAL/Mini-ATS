@@ -58,28 +58,26 @@ export default function CreateJobForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mb-8 space-y-5 rounded-xl border border-slate-200 bg-white p-6"
+      className="panel form-panel"
     >
-      <div>
-        <h3 className="text-lg font-semibold">Create Job Opening</h3>
-        <p className="mt-1 text-sm text-slate-500">
-          Add a new position to your recruitment dashboard.
-        </p>
+      <div className="section-heading">
+        <div><h3>Open a new role</h3><p>Give the hiring desk enough signal to start matching.</p></div>
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Job title</label>
+      <div className="form-grid">
+      <div className="form-field">
+        <label>Job title</label>
         <input
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Full Stack Developer"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
+          className="input"
         />
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">
+      <div className="form-field full">
+        <label>
           Job description
         </label>
         <textarea
@@ -88,39 +86,39 @@ export default function CreateJobForm({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Describe the role and responsibilities..."
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
+          className="textarea"
         />
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">
+      <div className="form-field">
+        <label>
           Required skills
         </label>
         <input
           value={requiredSkills}
           onChange={(e) => setRequiredSkills(e.target.value)}
           placeholder="React, TypeScript, Node.js"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
+          className="input"
         />
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="form-help">
           Separate skills with commas.
         </p>
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">
+      <div className="form-field">
+        <label>
           Preferred skills
         </label>
         <input
           value={preferredSkills}
           onChange={(e) => setPreferredSkills(e.target.value)}
           placeholder="Docker, AWS, PostgreSQL"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
+          className="input"
         />
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">
+      <div className="form-field">
+        <label>
           Minimum experience (years)
         </label>
         <input
@@ -129,17 +127,18 @@ export default function CreateJobForm({
           value={experience}
           onChange={(e) => setExperience(e.target.value)}
           placeholder="e.g. 2"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
+          className="input"
         />
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      </div>
+      {error && <p className="notice">{error}</p>}
 
-      <div className="flex gap-3">
+      <div className="form-actions">
         <button
           type="submit"
           disabled={creating}
-          className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="primary-button"
         >
           {creating ? "Creating..." : "Create Job"}
         </button>
@@ -147,7 +146,7 @@ export default function CreateJobForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-slate-300 px-5 py-2 text-sm font-medium"
+          className="secondary-button"
         >
           Cancel
         </button>

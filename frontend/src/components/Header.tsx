@@ -11,31 +11,20 @@ export default function Header({
   loading = false,
 }: HeaderProps) {
   return (
-    <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Mini ATS</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Applicant Tracking System
-          </p>
+    <header className="topbar">
+      <div className="topbar-inner">
+        <div className="brand-lockup">
+          <div className="brand-mark">M</div>
+          <div>
+            <h1 className="brand-name">Mini ATS</h1>
+            <p className="brand-caption">Hiring, made legible</p>
+          </div>
         </div>
 
-        {onBack ? (
-          <button
-            onClick={onBack}
-            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-100"
-          >
-            All Jobs
-          </button>
-        ) : (
-          <button
-            onClick={onRefresh}
-            disabled={loading}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {loading ? "Loading..." : "Refresh"}
-          </button>
-        )}
+        <div className="header-actions">
+          {onBack && <button onClick={onBack} className="secondary-button">All roles</button>}
+          {!onBack && <button onClick={onRefresh} disabled={loading} className="secondary-button">{loading ? "Syncing..." : "Refresh roles"}</button>}
+        </div>
       </div>
     </header>
   );
