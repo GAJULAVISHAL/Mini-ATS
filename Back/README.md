@@ -1,4 +1,6 @@
-# back
+# Backend
+
+The backend application is contained in the `Back/` directory. The `out/` directory is reserved for backend build output and is ignored by Git.
 
 To install dependencies:
 
@@ -6,10 +8,22 @@ To install dependencies:
 bun install
 ```
 
+To validate the backend and generate the Prisma client:
+
+```bash
+bun run build
+```
+
 To run:
 
 ```bash
-bun run index.ts
+bun run start
 ```
 
-This project was created using `bun init` in bun v1.3.5. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+For development with file watching:
+
+```bash
+bun run dev
+```
+
+The API runs on port `5000` by default.
