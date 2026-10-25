@@ -35,15 +35,16 @@ button { cursor: pointer; }
 .section-heading h3, .panel-title { margin: 0; color: #f3eee5; font-family: "Space Grotesk"; font-size: 18px; letter-spacing: -.03em; }
 .section-heading p, .panel-subtitle { margin: 5px 0 0; color: #8f9690; font-size: 12px; }
 .job-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.job-card { position: relative; min-height: 258px; padding: 22px; overflow: hidden; border: 1px solid #303531; background: #191d1b; text-align: left; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+.job-card { position: relative; display: flex; min-height: 258px; flex-direction: column; padding: 22px; overflow: hidden; border: 1px solid #303531; background: #191d1b; text-align: left; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
 .job-card::after { content: ""; position: absolute; right: -24px; bottom: -34px; width: 110px; height: 110px; border: 1px solid #353b36; border-radius: 50%; }
 .job-card:hover { transform: translateY(-4px); border-color: #f06d4f; background: #1e2320; }
-.job-card h3 { margin: 22px 0 0; max-width: 80%; color: #f5f0e8; font-family: "Space Grotesk"; font-size: 22px; line-height: 1.05; letter-spacing: -.045em; }
+.job-card-header { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.job-card h3 { margin: 24px 0 0; max-width: 82%; color: #f5f0e8; font-family: "Space Grotesk"; font-size: 22px; line-height: 1.05; letter-spacing: -.045em; }
 .job-card-description { min-height: 48px; margin: 12px 0 0; color: #a6aba5; font-size: 12px; line-height: 1.55; }
 .job-meta { display: flex; gap: 18px; margin-top: 18px; color: #7d857f; font-family: "DM Mono"; font-size: 10px; text-transform: uppercase; }
 .skill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
 .skill-chip { padding: 5px 8px; border: 1px solid #39413b; color: #c1c8be; font-family: "DM Mono"; font-size: 10px; }
-.card-link { position: absolute; left: 22px; bottom: 20px; color: #f06d4f; font-family: "DM Mono"; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.card-link { position: relative; z-index: 1; display: block; margin-top: auto; padding-top: 18px; color: #f06d4f; font-family: "DM Mono"; font-size: 10px; letter-spacing: .08em; line-height: 1.4; text-transform: uppercase; }
 .status-pill { display: inline-flex; padding: 5px 8px; border: 1px solid #46614e; color: #9ed0a4; font-family: "DM Mono"; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 .primary-button, .secondary-button, .quiet-button { border: 0; padding: 12px 16px; font-size: 12px; font-weight: 700; transition: opacity .2s, transform .2s, background .2s; }
 .primary-button { background: #f06d4f; color: #171817; }

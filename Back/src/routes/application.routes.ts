@@ -9,4 +9,9 @@ applicationRouter.get(
   applicationController.findByJobId
 );
 
+applicationRouter.patch(
+  "/applications/:applicationId/status",
+  applicationController.updateStatus
+);
+
 export default applicationRouter;

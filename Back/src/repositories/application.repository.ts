@@ -2,7 +2,7 @@
 import { prisma } from "../lib/db";
 
 export const applicationRepository = {
-  
+
   create(data: {
     jobId: string;
     candidateId: string;
@@ -38,6 +38,38 @@ export const applicationRepository = {
         },
 
         matchReport: true,
+      },
+    });
+  },
+
+  updateStatus(
+    applicationId: string,
+    status:
+      | "APPLIED"
+      | "SHORTLISTED"
+      | "INTERVIEW"
+      | "SELECTED"
+      | "REJECTED"
+      | "NEEDS_REVIEW"
+  ) {
+    return prisma.application.update({
+      where: { id: applicationId },
+      data: { status },
+      select: {
+        id: true,
+        jobId: true,
+        candidateId: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        candidate: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
       },
     });
   },

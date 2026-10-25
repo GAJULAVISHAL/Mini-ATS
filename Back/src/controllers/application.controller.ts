@@ -38,4 +38,46 @@ export const applicationController = {
       });
     }
   },
+  async updateStatus(req: Request, res: Response) {
+    try {
+      const applicationId = req.params.applicationId;
+
+      if (typeof applicationId !== "string") {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid application ID",
+        });
+      }
+
+      const application = await applicationService.updateStatus(
+        applicationId,
+        req.body?.status
+      );
+
+      res.status(200).json({
+        success: true,
+        data: application,
+        message: "Hiring stage updated successfully",
+      });
+    } catch (error) {
+      const statusCode =
+        typeof error === "object" &&
+        error !== null &&
+        "statusCode" in error &&
+        typeof error.statusCode === "number"
+          ? error.statusCode
+          : error instanceof Error &&
+              error.message === "Invalid application status"
+            ? 400
+            : 500;
+
+      res.status(statusCode).json({
+        success: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to update hiring stage",
+      });
+    }
+  },
 };

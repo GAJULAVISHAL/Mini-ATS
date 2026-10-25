@@ -46,7 +46,7 @@ export default function JobsDashboard({
               onClick={() => onSelectJob(job)}
               className="job-card"
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="job-card-header">
                 <span className="mono-label">Role / {job.id.slice(0, 6)}</span>
                 <span className="status-pill">
                   {job.status}
@@ -84,9 +84,9 @@ export default function JobsDashboard({
                 ))}
               </div>
 
-              <p className="card-link">
+              <span className="card-link">
                 Open pipeline →
-              </p>
+              </span>
             </button>
           ))}
         </div>
